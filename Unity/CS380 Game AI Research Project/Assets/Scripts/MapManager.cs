@@ -42,8 +42,9 @@ public class MapManager : GenericSingletonClass<MapManager>
                 // set MapTile data.
                 MapTile mt = obj.GetComponent<MapTile>();
                 mt.SetXY((uint)j, (uint)i);
+
                 // VALUE RANDOMIZER FOR TEMPORARY USE
-                mt.SetValue(Random.Range(-1.0f, 1.0f));
+                //mt.SetValue(Random.Range(-1.0f, 1.0f));
 
                 // add to tiles                    
                 tiles[i].Add(obj);
@@ -77,6 +78,24 @@ public class MapManager : GenericSingletonClass<MapManager>
         if (height != tiles.Count && width != tiles[0].Count)
         {
             Alloc(width, height);
+        }
+    }
+
+    public void WriteTileData(MapGenSys.Data<float> data)
+    {
+        if (data.h > tiles.Count ||
+            data.w > tiles[0].Count)
+        {
+            SetSize((uint)data.w, (uint)data.h);
+        }
+
+        for (int i = 0; i < data.h; ++i)
+        {
+            for (int j = 0; j < data.w; ++j)
+            {
+                MapTile mt = tiles[i][j].GetComponent<MapTile>();
+                mt.SetValue(data.GetPos(j,i));
+            }
         }
     }
 }
