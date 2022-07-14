@@ -74,6 +74,9 @@ public class MapGenSys : MonoBehaviour
     }
 
     public void Generate() {
+        var seed = FindObjectOfType<Seed>();
+        seed.ResetRandom();
+
         // floating point data structure
         Data<float> initData = new Data<float>(width, height);
 

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Seed : MonoBehaviour
+public class Seed : MonoBehaviour  //GenericSingletonClass<Seed> // <<<< SINGLETON
 {
     public string GameSeed = "Default";
     public int CurrentSeed = 0;
@@ -13,6 +13,9 @@ public class Seed : MonoBehaviour
     private string randString;
     public int seedLength = 5;
     private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    // seeded random
+    public System.Random rng = null;
 
     // Start is called before the first frame update
     private void Awake()
@@ -46,5 +49,17 @@ public class Seed : MonoBehaviour
         {
             seedLength = GameSeed.Length;
         }
+    }
+
+    public void ResetRandom()
+    {
+        Random.InitState(CurrentSeed);
+    }
+
+    public void GetNewSeed()
+    {
+        genRandomString(seedLength);
+        CurrentSeed = GameSeed.GetHashCode();
+        Random.InitState(CurrentSeed);
     }
 }
