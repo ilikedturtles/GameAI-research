@@ -38,4 +38,13 @@ public class Seed : MonoBehaviour
 
         GameSeed = new string(str);
     }
+
+    //check for inputs
+    private void Update()
+    {
+        if(seedLength != GameSeed.Length)
+        {
+            seedLength = GameSeed.Length;
+        }
+    }
 }
