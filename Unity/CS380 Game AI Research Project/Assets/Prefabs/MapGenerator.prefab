@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 575335195362193084}
   - component: {fileID: 575335195362193091}
   - component: {fileID: 575335195362193085}
+  - component: {fileID: 5033916019730333593}
+  - component: {fileID: 7721882056687665146}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -60,3 +62,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TilePrefab: {fileID: 1348247329763496945, guid: e0508a3d2319b2d4bb7a3e1afcb81881, type: 3}
+--- !u!114 &5033916019730333593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575335195362193090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7df29276291d544699fc625b2236afb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 10
+  height: 10
+  seed: 0
+--- !u!114 &7721882056687665146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575335195362193090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2527fd7ed1cf2a148b35b87b308ee478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameSeed: Hehe1234325
+  CurrentSeed: 0
+  randomSeed: 0
+  seedLength: 5

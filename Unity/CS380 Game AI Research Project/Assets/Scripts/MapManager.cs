@@ -42,8 +42,9 @@ public class MapManager : GenericSingletonClass<MapManager>
                 // set MapTile data.
                 MapTile mt = obj.GetComponent<MapTile>();
                 mt.SetXY((uint)j, (uint)i);
+
                 // VALUE RANDOMIZER FOR TEMPORARY USE
-                mt.SetValue(Random.Range(-1.0f, 1.0f));
+                //mt.SetValue(Random.Range(-1.0f, 1.0f));
 
                 // add to tiles                    
                 tiles[i].Add(obj);
