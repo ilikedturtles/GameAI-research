@@ -21,7 +21,7 @@ public class MapGenSys : MonoBehaviour
 
         public T GetPos(int x, int y)
         {
-            if (y * w + x > w * h)
+            if (x < 0 || y < 0 || x >= w || y >= h)
             {
                 // error
                 Debug.LogError("Invalid Write Index");
@@ -31,7 +31,7 @@ public class MapGenSys : MonoBehaviour
         }
 
         public void SetPos(int x, int y, T value) {
-            if (y * w + x > w * h)
+            if (x < 0 || y < 0 || x >= w || y >= h)
             {
                 // error
                 Debug.LogError("Invalid Read Index");

@@ -21,10 +21,10 @@ public class BiggestIsland : MapGenSys.Algorithm
     }
 
     private GridPos[] offsets = new[] {
-        new GridPos(-1, 0),
-        new GridPos( 1, 0),
-        new GridPos( 0,-1),
-        new GridPos( 0, 1)
+        new GridPos(-1, 0), //down
+        new GridPos( 1, 0), //up
+        new GridPos( 0,-1), //left
+        new GridPos( 0, 1) //right
     };
 
     override public string Name { get { return "Biggest Island"; } }
@@ -79,7 +79,10 @@ public class BiggestIsland : MapGenSys.Algorithm
                     // check that pos is not wall
                     if (!map.GetPos(eval.x, eval.y)) continue;
 
-                    if (isles[eval] != 0) continue;
+                    if (isles.ContainsKey(eval) && (isles[eval] != 0))
+                    {
+                        continue;
+                    }
 
                     isles[eval] = numIsles;
 
@@ -96,13 +99,18 @@ public class BiggestIsland : MapGenSys.Algorithm
             count[item.Value - 1]++;
         }
 
+        int maxIndex = 0;
+        int currIndex = 0;
         int biggestIsleId = 0;
         foreach (var item in count)
         {
+            ++currIndex;
             if (item > biggestIsleId)
             {
                 biggestIsleId = item;
+                maxIndex = currIndex;
             }
+
         }
 
         for (int i = 0; i < map.w * map.h; ++i)
@@ -113,7 +121,7 @@ public class BiggestIsland : MapGenSys.Algorithm
 
             if (isles.TryGetValue(gPos, out id))
             {
-                if (id != biggestIsleId)
+                if (id != maxIndex)
                 {
                    map.data[i] = false;
                 }
