@@ -4,6 +4,26 @@ using UnityEngine;
 
 public class MapGenSys : MonoBehaviour
 {
+    public struct GridPos
+    {
+        public int x;
+        public int y;
+
+        public GridPos(int a, int b)
+        {
+            x = a;
+            y = b;
+        }
+
+        public static GridPos operator +(GridPos other, GridPos other2) => new GridPos(other.x + other2.x, other.y + other2.y);
+    }
+
+    //public void FindEnds(ref Data<bool> map, out GridPos start, out GridPos end)
+    //{
+
+    //}
+
+
     [Range(-1.0f, 1.0f)]
     public float threshold = 0.0f;
 
@@ -20,6 +40,7 @@ public class MapGenSys : MonoBehaviour
 
     public class Data<T>
     {
+
         public int w, h;
         public T[] data;
  

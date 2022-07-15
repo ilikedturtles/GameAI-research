@@ -2,23 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using GridPos = MapGenSys.GridPos;
 public class BiggestIsland : MapGenSys.Algorithm
 {
     //public string name = "Sample";
-
-    public struct GridPos
-    {
-        public int x;
-        public int y;
-
-        public GridPos(int a, int b)
-        {
-            x = a;
-            y = b;
-        }
-
-        public static GridPos operator +(GridPos other, GridPos other2) => new GridPos(other.x + other2.x, other.y + other2.y);
-    }
 
     private GridPos[] offsets = new[] {
         new GridPos(-1, 0), //down
