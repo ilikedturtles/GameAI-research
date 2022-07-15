@@ -98,4 +98,22 @@ public class MapManager : GenericSingletonClass<MapManager>
             }
         }
     }
+
+    public void WriteTileData(MapGenSys.Data<bool> data)
+    {
+        if (data.h > tiles.Count ||
+            data.w > tiles[0].Count)
+        {
+            SetSize((uint)data.w, (uint)data.h);
+        }
+
+        for (int i = 0; i < data.h; ++i)
+        {
+            for (int j = 0; j < data.w; ++j)
+            {
+                MapTile mt = tiles[i][j].GetComponent<MapTile>();
+                mt.SetValue(data.GetPos(j, i) ? 1.0f : 0.0f);
+            }
+        }
+    }
 }

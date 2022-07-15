@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class MapGenSys : MonoBehaviour
 {
+    [Range(-1.0f, 1.0f)]
+    public float threshold = 0.0f;
+
+    public void SetThreshold(float val)
+    {
+        bool different = false;
+
+        if (val != threshold) different = true;
+
+        threshold = val;
+
+        if (different) Generate();
+    }
+
     public class Data<T>
     {
         public int w, h;
         public T[] data;
-        //public ArrayList data;
-        //public T[] data;
-
+ 
         public Data(int width, int height)
         {
             w = width;
@@ -21,7 +33,7 @@ public class MapGenSys : MonoBehaviour
 
         public T GetPos(int x, int y)
         {
-            if (y * w + x > w * h)
+            if (x < 0 || y < 0 || x >= w || y >= h)
             {
                 // error
                 Debug.LogError("Invalid Write Index");
@@ -31,7 +43,7 @@ public class MapGenSys : MonoBehaviour
         }
 
         public void SetPos(int x, int y, T value) {
-            if (y * w + x > w * h)
+            if (x < 0 || y < 0 || x >= w || y >= h)
             {
                 // error
                 Debug.LogError("Invalid Read Index");
@@ -41,20 +53,24 @@ public class MapGenSys : MonoBehaviour
 
             data[y * w + x] = value;
         }
+
+        public bool ValidPos(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= w || y >= h) return false;
+            return true;
+        } 
     };
 
     public abstract class Algorithm
     {
         public abstract string Name { get; }
         public abstract void Apply(ref Data<bool> data);
-        // TODO: implement method to get/set paramenters.
     };
 
     public abstract class Filter
     {
         public abstract string Name { get; }
         public abstract void Apply(ref Data<float> data);
-        // TODO: implement method to get/set paramenters.
     };
 
     public int width, height;
@@ -68,9 +84,10 @@ public class MapGenSys : MonoBehaviour
 
     private void Start()
     {
-        algs.Add(new SampleAlgorithm());
+        //algs.Add(new SampleAlgorithm());
+        algs.Add(new BiggestIsland());
 
-        filters.Add(new SampleFilter());
+        //filters.Add(new SampleFilter());
     }
 
     public void Generate() {
@@ -99,7 +116,7 @@ public class MapGenSys : MonoBehaviour
         {
             for (int x_iter = 0; x_iter < width; ++x_iter)
             {
-                if (initData.GetPos(x_iter, y_iter) >= 0.0f) // THIS IS WHERE FLOAT TURNS TO BOOL
+                if (initData.GetPos(x_iter, y_iter) >= threshold) // THIS IS WHERE FLOAT TURNS TO BOOL
                 {
                     mapData.SetPos(x_iter, y_iter, true);
                 }
@@ -116,6 +133,6 @@ public class MapGenSys : MonoBehaviour
             algs[i].Apply(ref mapData);
         }
 
-        MapManager.Instance.WriteTileData(initData);
+        MapManager.Instance.WriteTileData(mapData);
     }
 }
