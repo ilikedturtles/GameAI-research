@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using GridPos = MapGenSys.GridPos;
 public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 {
     private bool dirty = true;
@@ -24,7 +23,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
         return dirty;
     }
 
-    public void Apply(ref MapGenSys.Data<bool> map)
+    public void Apply(ref MapData<bool> map)
     {
         dirty = false;
 
@@ -34,7 +33,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
         // each contiguous space will have a unique ID
 
         // Key: position, Value: Island ID
-        Dictionary<GridPos, int> isles = new();
+        Dictionary<MapPos, int> isles = new();
 
         int numIsles = 0;
 
@@ -44,7 +43,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
             if (map.data[i] == false) continue;
 
             // get index position
-            GridPos gPos = new(i % map.w, i / map.w);
+            MapPos gPos = new(i % map.w, i / map.w);
 
             // if not in map, continue
             if (isles.TryGetValue(gPos, out int val) == false) {
@@ -59,7 +58,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
             // mark new island
 
             // floodfill whole island
-            Stack<GridPos> ffStack = new();
+            Stack<MapPos> ffStack = new();
             ffStack.Push(gPos);
 
             while (ffStack.Count > 0)
@@ -68,7 +67,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 
                 for (int j = 0; j < 4; ++j)
                 {
-                    GridPos eval = top + MapGenSys.offsets[j];
+                    MapPos eval = top + MapPos.Offsets[j];
 
                     // check pos is in range
                     if (!map.ValidPos(eval.x, eval.y)) continue;
@@ -112,7 +111,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 
         for (int i = 0; i < map.w * map.h; ++i)
         {
-            GridPos gPos = new(i % map.w, i / map.w);
+            MapPos gPos = new(i % map.w, i / map.w);
 
             int id;
 

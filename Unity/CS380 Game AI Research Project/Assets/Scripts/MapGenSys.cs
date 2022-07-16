@@ -25,11 +25,6 @@ public class MapGenSys : MonoBehaviour
         new GridPos( 0, 1)  //up
     };
 
-    //public void FindEnds(ref Data<bool> map, out GridPos start, out GridPos end)
-    //{
-
-    //}
-
     [Range(-1.0f, 1.0f)]
     public float threshold = 0.0f;
 
@@ -44,73 +39,6 @@ public class MapGenSys : MonoBehaviour
         if (different) Generate();
     }
 
-    public class Data<T>
-    {
-        public int w, h;
-        public T[] data;
-
-        public Data(int width, int height)
-        {
-            w = width;
-            h = height;
-            //data = new List<T>(w * h);
-            data = new T[w * h];
-        }
-
-        public T GetPos(int x, int y)
-        {
-            if (!ValidPos(x, y))
-            {
-                // error
-                Debug.LogError("Invalid Write Index");
-            }
-
-            return data[y * w + x];
-        }
-
-        public void SetPos(int x, int y, T value)
-        {
-            if (!ValidPos(x,y))
-            {
-                // error
-                Debug.LogError("Invalid Read Index");
-                return;
-            }
-
-            data[y * w + x] = value;
-        }
-
-        public bool ValidPos(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= w || y >= h) return false;
-            return true;
-        }
-
-        public ref T Pos(int x, int y)
-        {
-            return ref data[y * w + x];
-        }
-
-        public T GetPos(GridPos gPos)
-        {
-            return GetPos(gPos.x, gPos.y);
-        }
-
-        public void SetPos(GridPos gPos, T value)
-        {
-            SetPos(gPos.x, gPos.y, value);
-        }
-
-        public ref T Pos(GridPos gPos)
-        {
-            return ref Pos(gPos.x, gPos.y);
-        }
-
-        public bool ValidPos(GridPos gPos)
-        {
-            return ValidPos(gPos.x, gPos.y);
-        }
-    };
 
     public interface Algorithm
     {
@@ -119,29 +47,15 @@ public class MapGenSys : MonoBehaviour
 
         public bool alg_enabled { get; set; }
 
-        void Apply(ref Data<bool> data);
+        void Apply(ref MapData<bool> data);
     }
 
     public interface Filter
     {
         string Name();
         bool Dirty();
-        void Apply(ref Data<float> data);
+        void Apply(ref MapData<float> data);
     }
-
-    //public abstract class Algorithm
-    //{
-    //    public bool dirty = true;
-    //    public abstract string Name { get; }
-    //    public abstract void Apply(ref Data<bool> data);
-    //};
-
-    //public abstract class Filter
-    //{
-    //    public bool dirty = true;
-    //    public abstract string Name { get; }
-    //    public abstract void Apply(ref Data<float> data);
-    //};
 
     public int width, height;
     public int seed;
@@ -200,7 +114,7 @@ public class MapGenSys : MonoBehaviour
         seed.ResetRandom();
 
         // floating point data structure
-        Data<float> initData = new Data<float>(width, height);
+        MapData<float> initData = new(width, height);
 
         // assign values
         // TODO: figure out seed setting.
@@ -215,7 +129,7 @@ public class MapGenSys : MonoBehaviour
             filters[i].Apply(ref initData);
         }
 
-        Data<bool> mapData = new Data<bool>(width, height);
+        MapData<bool> mapData = new(width, height);
         
         for (int y_iter = 0; y_iter < height; ++y_iter)
         {
@@ -237,6 +151,8 @@ public class MapGenSys : MonoBehaviour
         {
             algs[i].Apply(ref mapData);
         }
+
+        MapManager.Instance.WriteColor(new MapPos(1, 1), Color.magenta);
 
         MapManager.Instance.WriteTileData(mapData);
     }

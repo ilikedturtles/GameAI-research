@@ -5,7 +5,7 @@ using UnityEngine;
 public class MapGen : MonoBehaviour
 {
     // dimensions of map generated (tiles)
-    public uint width = 10, height = 10;
+    public int width = 10, height = 10;
 
     // Start is called before the first frame update
     void Start()

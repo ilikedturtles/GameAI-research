@@ -38,7 +38,7 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
         return dirty;
     }
 
-    public void Apply(ref MapGenSys.Data<bool> data)
+    public void Apply(ref MapData<bool> data)
     {
         dirty = false;
 
@@ -53,14 +53,14 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
         }
     }
 
-    MapGenSys.Data<bool> DoIteration(MapGenSys.Data<bool> map)
+    MapData<bool> DoIteration(MapData<bool> map)
     {
-        MapGenSys.Data<bool> result = new(map.w, map.h);
+        MapData<bool> result = new(map.w, map.h);
 
         for (int i = 0; i < map.w * map.h; ++i)
         {
             // get index position
-            GridPos gPos = new(i % map.w, i / map.w);
+            MapPos gPos = new(i % map.w, i / map.w);
 
             bool posData = map.GetPos(gPos) ;
 
@@ -71,7 +71,7 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
             // enable neighbors in temp
             for (int k = 0; k < 4; ++k)
             {
-                GridPos eval = gPos + MapGenSys.offsets[k];
+                MapPos eval = gPos + MapPos.Offsets[k];
 
                 if (!result.ValidPos(eval)) continue;
 

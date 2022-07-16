@@ -25,7 +25,7 @@ public class SampleFilter : MonoBehaviour, MapGenSys.Filter
         threshold = value;
     }
 
-    public void Apply(ref MapGenSys.Data<float> data)
+    public void Apply(ref MapData<float> data)
     {
         dirty = false;
 

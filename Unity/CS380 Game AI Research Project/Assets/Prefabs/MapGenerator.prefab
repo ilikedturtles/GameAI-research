@@ -13,6 +13,9 @@ GameObject:
   - component: {fileID: 575335195362193085}
   - component: {fileID: 5033916019730333593}
   - component: {fileID: 7721882056687665146}
+  - component: {fileID: 7120514244787654304}
+  - component: {fileID: 2173026594421126470}
+  - component: {fileID: 8442202272438204278}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -62,6 +65,64 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TilePrefab: {fileID: 1348247329763496945, guid: e0508a3d2319b2d4bb7a3e1afcb81881, type: 3}
+  TileFloatGrad:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.027672686, b: 0, a: 1}
+    key1: {r: 0, g: 0.7266457, b: 1, a: 1}
+    key2: {r: 1, g: 1, b: 1, a: 0}
+    key3: {r: 1, g: 1, b: 1, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 65535
+    ctime3: 65535
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  TileBoolGrad:
+    serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 0, g: 1, b: 0.07796383, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 32960
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
 --- !u!114 &5033916019730333593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,6 +139,11 @@ MonoBehaviour:
   width: 10
   height: 10
   seed: 0
+  Algorithms:
+  - {fileID: 7120514244787654304}
+  - {fileID: 2173026594421126470}
+  - {fileID: 8442202272438204278}
+  Filters: []
 --- !u!114 &7721882056687665146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,3 +160,40 @@ MonoBehaviour:
   CurrentSeed: 0
   randomSeed: 0
   seedLength: 5
+--- !u!114 &7120514244787654304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575335195362193090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d15a455ef915444389b76c614262088, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2173026594421126470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575335195362193090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0402caaa276fe448a933b887b4b4ed7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iterations: 0
+--- !u!114 &8442202272438204278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575335195362193090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0582172abb049c546baa5f5a1fd944b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

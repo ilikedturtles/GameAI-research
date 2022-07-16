@@ -25,7 +25,7 @@ public class SampleAlgorithm : MonoBehaviour, MapGenSys.Algorithm
         return dirty;
     }
 
-    public void Apply(ref MapGenSys.Data<bool> data)
+    public void Apply(ref MapData<bool> data)
     {
         if (!alg_enabled) return;
 

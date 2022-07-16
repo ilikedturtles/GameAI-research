@@ -2,38 +2,139 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct MapPos
+{
+    public int x;
+    public int y;
+
+    public static MapPos[] Offsets = new[] {
+        new MapPos(-1, 0), //left
+        new MapPos( 1, 0), //right
+        new MapPos( 0,-1), //down
+        new MapPos( 0, 1)  //up
+    };
+
+    public MapPos(int a, int b)
+    {
+        x = a;
+        y = b;
+    }
+
+    public static MapPos operator +(MapPos other, MapPos other2)
+    {
+        return new MapPos(other.x + other2.x, other.y + other2.y);
+    }    
+}
+
+public class MapData<T>
+{
+    public int w, h;
+    public T[] data;
+
+    // CTOR
+    public MapData(int width, int height)
+    {
+        w = width;
+        h = height;
+        data = new T[w * h];
+    }
+
+    // ACCESSORS
+    public T GetPos(int x, int y)
+    {
+        if (!ValidPos(x, y))
+        {
+            // error
+            Debug.LogError("Invalid Write Index");
+        }
+
+        return data[y * w + x];
+    }
+
+    public void SetPos(int x, int y, T value)
+    {
+        if (!ValidPos(x, y))
+        {
+            // error
+            Debug.LogError("Invalid Read Index");
+            return;
+        }
+
+        data[y * w + x] = value;
+    }
+
+    public ref T Pos(int x, int y)
+    {
+        return ref data[y * w + x];
+    }
+
+    public bool ValidPos(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= w || y >= h) return false;
+        return true;
+    }
+
+    public T GetPos(MapPos gPos)
+    {
+        return GetPos(gPos.x, gPos.y);
+    }
+
+    public void SetPos(MapPos gPos, T value)
+    {
+        SetPos(gPos.x, gPos.y, value);
+    }
+
+    public ref T Pos(MapPos gPos)
+    {
+        return ref Pos(gPos.x, gPos.y);
+    }
+
+    public bool ValidPos(MapPos gPos)
+    {
+        return ValidPos(gPos.x, gPos.y);
+    }
+
+    public MapPos IndexMapPos(int index)
+    {
+        return new(index % w, index / w);
+    }
+};
+
+
 public class MapManager : GenericSingletonClass<MapManager>
 {
     [SerializeReference]
     public GameObject TilePrefab;
 
-    public List<List<GameObject>> tiles = null;
+    public Gradient TileFloatGrad;
+    public Gradient TileBoolGrad;
 
-    private void DestroyTiles()
+    private MapData<GameObject> tiles = null;
+
+    struct TileColor
     {
-        // free previous grid
-        for (int i = 0; i < tiles.Count; ++i)
+        public MapPos mPos;
+        public Color _color;
+
+        public TileColor(MapPos pos, Color color)
         {
-            for (int j = 0; j < tiles[i].Count; ++j)
-            {
-                Destroy(tiles[i][j]);
-            }
-            tiles[i].Clear();
+            mPos = pos;
+            _color = color;
         }
+    };
 
-        tiles.Clear();
-    }
+    Stack<TileColor> colorTiles = new();
 
-    private void PlaceTiles(uint width, uint height)
+    // private helpers
+
+    private void PlaceTiles()
     {
-        Vector2 TileDims = new Vector2(TilePrefab.transform.localScale.x, TilePrefab.transform.localScale.z);
+        Vector2 TileDims = new(TilePrefab.transform.localScale.x, TilePrefab.transform.localScale.z);
 
         // instantiate new tiles, apply position offset.
-        for (int i = 0; i < height; ++i)
+        for (int i = 0; i < tiles.h; ++i)
         {
-            // establish new row
-            tiles.Add(new List<GameObject>());
-            for (int j = 0; j < width; ++j)
+            for (int j = 0; j < tiles.w; ++j)
             {
                 // instantiate prefab
                 GameObject obj = Instantiate(TilePrefab);
@@ -43,77 +144,90 @@ public class MapManager : GenericSingletonClass<MapManager>
                 MapTile mt = obj.GetComponent<MapTile>();
                 mt.SetXY((uint)j, (uint)i);
 
-                // VALUE RANDOMIZER FOR TEMPORARY USE
-                //mt.SetValue(Random.Range(-1.0f, 1.0f));
-
                 // add to tiles                    
-                tiles[i].Add(obj);
+                tiles.Pos(j, i) = obj;
             }
         }
     }
 
-    private void Alloc(uint width, uint height)
-    {
-        if (tiles == null)
-        {
-            tiles = new List<List<GameObject>>();
-        }
-        else
-        {
-            DestroyTiles();
-        }
+    // public functions
 
-        PlaceTiles(width, height);
+    public void SetSize(int width, int height)
+    {
+        if (tiles == null || tiles.w != width || tiles.h != height)
+        {
+            tiles = new(width, height);
+            PlaceTiles();
+        }
     }
 
-    public void SetSize(uint width, uint height)
+    public void WriteTileData(MapData<float> data)
     {
-        if (tiles == null)
+        if (data.h != tiles.h || data.w != tiles.w)
         {
-            Alloc(width, height);
+            Debug.LogError("Mismatched MapData Sizes", this);
             return;
         }
 
-        // reallocate to fit new size.
-        if (height != tiles.Count && width != tiles[0].Count)
+        for (int i = 0; i < tiles.w * tiles.h; ++i)
         {
-            Alloc(width, height);
+            MapPos mPos = tiles.IndexMapPos(i);
+
+            GameObject tile = tiles.Pos(mPos);
+
+            float value = data.Pos(mPos);
+
+            Renderer renderer = tile.GetComponent<Renderer>();
+            
+            Color newColor = TileFloatGrad.Evaluate((value + 1.0f) / 2.0f);
+
+            renderer.materials[0].SetColor("_Color", newColor);
         }
     }
 
-    public void WriteTileData(MapGenSys.Data<float> data)
+    private void LateUpdate()
     {
-        if (data.h > tiles.Count ||
-            data.w > tiles[0].Count)
+        while (colorTiles.Count != 0)
         {
-            SetSize((uint)data.w, (uint)data.h);
-        }
+            TileColor tColor = colorTiles.Pop();
 
-        for (int i = 0; i < data.h; ++i)
-        {
-            for (int j = 0; j < data.w; ++j)
-            {
-                MapTile mt = tiles[i][j].GetComponent<MapTile>();
-                mt.SetValue(data.GetPos(j,i));
-            }
+            GameObject tile = tiles.Pos(tColor.mPos);
+            Renderer renderer = tile.GetComponent<Renderer>();
+            renderer.materials[0].SetColor("_Color", tColor._color);
         }
     }
 
-    public void WriteTileData(MapGenSys.Data<bool> data)
+    public void WriteTileData(MapData<bool> data)
     {
-        if (data.h > tiles.Count ||
-            data.w > tiles[0].Count)
+        if (data.h != tiles.h || data.w != tiles.w)
         {
-            SetSize((uint)data.w, (uint)data.h);
+            Debug.LogError("Mismatched MapData Sizes", this);
+            return;
         }
 
-        for (int i = 0; i < data.h; ++i)
+        for (int i = 0; i < tiles.w * tiles.h; ++i)
         {
-            for (int j = 0; j < data.w; ++j)
-            {
-                MapTile mt = tiles[i][j].GetComponent<MapTile>();
-                mt.SetValue(data.GetPos(j, i) ? 1.0f : 0.0f);
-            }
+            MapPos mPos = tiles.IndexMapPos(i);
+
+            GameObject tile = tiles.Pos(mPos);
+
+            bool value = data.Pos(mPos);
+
+            Renderer renderer = tile.GetComponent<Renderer>();
+
+            Color newColor = TileBoolGrad.Evaluate(value ? 1.0f : 0.0f);
+
+            renderer.materials[0].SetColor("_Color", newColor);
         }
+    }
+
+    public void WriteColor(MapPos mPos, Color color)
+    {
+        colorTiles.Push(new TileColor(mPos, color));
+    }
+
+    public Vector3 GetTileWorldPos(MapPos mPos)
+    {
+        return tiles.Pos(mPos).transform.position;
     }
 }
