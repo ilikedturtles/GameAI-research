@@ -7,6 +7,13 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 {
     private bool dirty = true;
 
+    private bool _alg_enabled = true;
+    public bool alg_enabled
+    {
+        get { return _alg_enabled; }
+        set { _alg_enabled = value; dirty = true; }
+    }
+
     public string Name()
     {
         return "Biggest Island";
@@ -19,8 +26,10 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 
     public void Apply(ref MapGenSys.Data<bool> map)
     {
-        dirty = false;  
-        
+        dirty = false;
+
+        if (!alg_enabled) return;
+
         // index of island IDs based on grid pos
         // each contiguous space will have a unique ID
 
@@ -113,6 +122,9 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
                 {
                    map.data[i] = false;
                 }
+            } else
+            {
+                map.data[i] = false;
             }
         }
     }

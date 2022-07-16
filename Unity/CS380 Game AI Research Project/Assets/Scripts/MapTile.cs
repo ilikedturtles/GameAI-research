@@ -11,7 +11,6 @@ public class MapTile : MonoBehaviour
     [Header("Visualizer")]
     public Gradient valueGrad;
 
-
     void LateUpdate()
     {
         // set color for visualization

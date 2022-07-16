@@ -116,6 +116,9 @@ public class MapGenSys : MonoBehaviour
     {
         string Name();
         bool Dirty();
+
+        public bool alg_enabled { get; set; }
+
         void Apply(ref Data<bool> data);
     }
 

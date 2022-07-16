@@ -7,6 +7,12 @@ using GridPos = MapGenSys.GridPos;
 public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 {
     private bool dirty = true;
+    private bool _alg_enabled = true;
+    public bool alg_enabled
+    {
+        get { return _alg_enabled; }
+        set { _alg_enabled = value; dirty = true; }
+    }
 
     [SerializeField]
     private int iterations = 0;
@@ -35,6 +41,8 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
     public void Apply(ref MapGenSys.Data<bool> data)
     {
         dirty = false;
+
+        if (!alg_enabled) return;
 
         for (int i = 0; i < data.w * data.h; ++i)
         {
