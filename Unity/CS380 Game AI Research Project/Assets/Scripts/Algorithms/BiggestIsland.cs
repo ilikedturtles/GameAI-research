@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using GridPos = MapGenSys.GridPos;
-public class BiggestIsland : MapGenSys.Algorithm
+public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 {
-    //public string name = "Sample";
+    private bool dirty = true;
 
-    private GridPos[] offsets = new[] {
-        new GridPos(-1, 0), //down
-        new GridPos( 1, 0), //up
-        new GridPos( 0,-1), //left
-        new GridPos( 0, 1) //right
-    };
-
-    override public string Name { get { return "Biggest Island"; } }
-
-    override public void Apply(ref MapGenSys.Data<bool> map)
+    public string Name()
     {
+        return "Biggest Island";
+    }
+
+    public bool Dirty()
+    {
+        return dirty;
+    }
+
+    public void Apply(ref MapGenSys.Data<bool> map)
+    {
+        dirty = false;  
         
         // index of island IDs based on grid pos
         // each contiguous space will have a unique ID
@@ -35,9 +37,8 @@ public class BiggestIsland : MapGenSys.Algorithm
             // get index position
             GridPos gPos = new(i % map.w, i / map.w);
 
-            int val = 0;
             // if not in map, continue
-            if (isles.TryGetValue(gPos, out val) == false) {
+            if (isles.TryGetValue(gPos, out int val) == false) {
                 isles.Add(gPos, ++numIsles);
             }
             // if already in island, continue
@@ -58,7 +59,7 @@ public class BiggestIsland : MapGenSys.Algorithm
 
                 for (int j = 0; j < 4; ++j)
                 {
-                    GridPos eval = top + offsets[j];
+                    GridPos eval = top + MapGenSys.offsets[j];
 
                     // check pos is in range
                     if (!map.ValidPos(eval.x, eval.y)) continue;
@@ -115,4 +116,5 @@ public class BiggestIsland : MapGenSys.Algorithm
             }
         }
     }
+
 }

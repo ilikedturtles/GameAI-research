@@ -2,17 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SampleFilter : MapGenSys.Filter
+public class SampleFilter : MonoBehaviour, MapGenSys.Filter
 {
-    
-    override public string Name { get { return "Sample"; } }
+    private bool dirty = true;
+
+    public string Name()
+    {
+        return "Sample";
+    }
+
+    public bool Dirty()
+    {
+        return dirty;
+    }
+
 
     public float threshold = 0.0f;
 
-    
-
-    override public void Apply(ref MapGenSys.Data<float> data)
+    public void SetThreshold(float value)
     {
+        dirty = true;
+        threshold = value;
+    }
+
+    public void Apply(ref MapGenSys.Data<float> data)
+    {
+        dirty = false;
+
         for (int i = 0; i < data.w * data.h; ++i)
         {
             if (data.data[i] < threshold)

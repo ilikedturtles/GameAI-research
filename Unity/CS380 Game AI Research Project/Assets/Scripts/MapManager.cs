@@ -37,7 +37,7 @@ public class MapManager : GenericSingletonClass<MapManager>
             {
                 // instantiate prefab
                 GameObject obj = Instantiate(TilePrefab);
-                obj.transform.position = new Vector3(TileDims.y * i, 0.0f, TileDims.x * j);
+                obj.transform.position = new Vector3(TileDims.x * j, 0.0f, TileDims.y * i);
 
                 // set MapTile data.
                 MapTile mt = obj.GetComponent<MapTile>();

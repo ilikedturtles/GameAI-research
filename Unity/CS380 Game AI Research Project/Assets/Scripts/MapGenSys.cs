@@ -18,11 +18,17 @@ public class MapGenSys : MonoBehaviour
         public static GridPos operator +(GridPos other, GridPos other2) => new GridPos(other.x + other2.x, other.y + other2.y);
     }
 
+    static public GridPos[] offsets = new[] {
+        new GridPos(-1, 0), //left
+        new GridPos( 1, 0), //right
+        new GridPos( 0,-1), //down
+        new GridPos( 0, 1)  //up
+    };
+
     //public void FindEnds(ref Data<bool> map, out GridPos start, out GridPos end)
     //{
 
     //}
-
 
     [Range(-1.0f, 1.0f)]
     public float threshold = 0.0f;
@@ -40,10 +46,9 @@ public class MapGenSys : MonoBehaviour
 
     public class Data<T>
     {
-
         public int w, h;
         public T[] data;
- 
+
         public Data(int width, int height)
         {
             w = width;
@@ -54,7 +59,7 @@ public class MapGenSys : MonoBehaviour
 
         public T GetPos(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= w || y >= h)
+            if (!ValidPos(x, y))
             {
                 // error
                 Debug.LogError("Invalid Write Index");
@@ -63,14 +68,14 @@ public class MapGenSys : MonoBehaviour
             return data[y * w + x];
         }
 
-        public void SetPos(int x, int y, T value) {
-            if (x < 0 || y < 0 || x >= w || y >= h)
+        public void SetPos(int x, int y, T value)
+        {
+            if (!ValidPos(x,y))
             {
                 // error
                 Debug.LogError("Invalid Read Index");
                 return;
             }
-
 
             data[y * w + x] = value;
         }
@@ -79,36 +84,112 @@ public class MapGenSys : MonoBehaviour
         {
             if (x < 0 || y < 0 || x >= w || y >= h) return false;
             return true;
-        } 
+        }
+
+        public ref T Pos(int x, int y)
+        {
+            return ref data[y * w + x];
+        }
+
+        public T GetPos(GridPos gPos)
+        {
+            return GetPos(gPos.x, gPos.y);
+        }
+
+        public void SetPos(GridPos gPos, T value)
+        {
+            SetPos(gPos.x, gPos.y, value);
+        }
+
+        public ref T Pos(GridPos gPos)
+        {
+            return ref Pos(gPos.x, gPos.y);
+        }
+
+        public bool ValidPos(GridPos gPos)
+        {
+            return ValidPos(gPos.x, gPos.y);
+        }
     };
 
-    public abstract class Algorithm
+    public interface Algorithm
     {
-        public abstract string Name { get; }
-        public abstract void Apply(ref Data<bool> data);
-    };
+        string Name();
+        bool Dirty();
+        void Apply(ref Data<bool> data);
+    }
 
-    public abstract class Filter
+    public interface Filter
     {
-        public abstract string Name { get; }
-        public abstract void Apply(ref Data<float> data);
-    };
+        string Name();
+        bool Dirty();
+        void Apply(ref Data<float> data);
+    }
+
+    //public abstract class Algorithm
+    //{
+    //    public bool dirty = true;
+    //    public abstract string Name { get; }
+    //    public abstract void Apply(ref Data<bool> data);
+    //};
+
+    //public abstract class Filter
+    //{
+    //    public bool dirty = true;
+    //    public abstract string Name { get; }
+    //    public abstract void Apply(ref Data<float> data);
+    //};
 
     public int width, height;
     public int seed;
 
-    [SerializeField]
     public List<Algorithm> algs = new List<Algorithm>();
-
-    [SerializeField]
     public List<Filter> filters = new List<Filter>();
+
+    [SerializeReference]
+    public List<Component> Algorithms = new();
+
+    [SerializeReference]
+    public List<Component> Filters = new();
 
     private void Start()
     {
-        //algs.Add(new SampleAlgorithm());
-        algs.Add(new BiggestIsland());
+        foreach (var item in Algorithms)
+        {
+            algs.Add(item as Algorithm);
+        }
+        foreach (var item in Filters)
+        {
+            filters.Add(item as Filter);
+        }
+    }
 
-        //filters.Add(new SampleFilter());
+    private void Update()
+    {
+        bool needRecalc = false;
+
+        foreach (var iter in filters)
+        {
+            if (iter.Dirty() == true)
+            {
+                needRecalc = true;
+                break;
+            }
+        }
+
+        foreach (var iter in algs)
+        {
+            if (iter.Dirty() == true)
+            {
+                needRecalc = true;
+                break;
+            }
+        }
+
+        if (needRecalc)
+        {
+            Generate();
+        }
     }
 
     public void Generate() {
