@@ -44,13 +44,6 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 
         if (!alg_enabled) return;
 
-        for (int i = 0; i < data.w * data.h; ++i)
-        {
-            data.data[i] = !data.data[i];
-        }
-
-        //MapGenSys.Data<bool> newData = new(data.w, data.h);
-
         int counter = 0;
         while (counter < iterations)
         {
