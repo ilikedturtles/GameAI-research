@@ -2,8 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Propogate : MonoBehaviour, MapGenSys.Algorithm
+public class Erosion : MonoBehaviour, MapGenSys.Algorithm
 {
+    // Configuration Values
+    [SerializeField]
+    private int iterations = 0;
+    public int Iterations
+    {
+        get { return iterations; }
+        set { iterations = value; dirty = true; }
+    }    
+    public void SetIterations(float value)
+    {
+        Iterations = (int)value;
+    }
+
+    // Alg Interface
     private bool dirty = true;
     [SerializeField]
     private bool _alg_enabled = true;
@@ -12,29 +26,13 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
         get { return _alg_enabled; }
         set { _alg_enabled = value; dirty = true; }
     }
-
-    [SerializeField]
-    private int iterations = 0;
-
-    public int Iterations
-    {
-        get { return iterations; }
-        set { iterations = value; dirty = true; }
-    }
-    
-    public void SetIterations(float value)
-    {
-        Iterations = (int)value;
-    }
-
-    public string Name()
-    {
-        return "Propogate";
-    }
-
     public bool Dirty()
     {
         return dirty;
+    }
+    public string Name()
+    {
+        return "Erode";
     }
 
     public void Apply(ref MapData<bool> data)
@@ -65,19 +63,19 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 
             result.SetPos(gPos, posData || result.GetPos(gPos));
 
-            if (posData == false) continue;
+            if (posData == true) continue;
 
-            // enable neighbors in temp
+            // disable neighbors in temp
             for (int k = 0; k < 4; ++k)
             {
                 MapPos eval = gPos + MapPos.Offsets[k];
 
                 if (!result.ValidPos(eval)) continue;
 
-                // if neighbor is disabled, set enabled
-                if (map.GetPos(eval) == false)
+                // if neighbor is enabled, set disabled
+                if (map.GetPos(eval) == true)
                 {
-                    result.SetPos(eval, true);
+                    result.SetPos(eval, false);
                 }
             }
         }

@@ -111,6 +111,19 @@ public class MapManager : GenericSingletonClass<MapManager>
 
     private MapData<GameObject> tiles = null;
 
+    private bool dirty = false;
+
+    public bool Dirty()
+    {
+        if (dirty)
+        {
+            dirty = false;
+            return true;
+        }
+
+        return false;
+    }
+
     struct TileColor
     {
         public MapPos mPos;
@@ -150,16 +163,61 @@ public class MapManager : GenericSingletonClass<MapManager>
         }
     }
 
+    private void DestoryTiles()
+    {
+        for (int i = 0; i < tiles.w * tiles.h; ++i)
+        {
+            MapPos mPos = tiles.IndexMapPos(i);
+            Destroy(tiles.Pos(mPos));
+            tiles.Pos(mPos) = null;
+        }
+    }
+
     // public functions
+
 
     public void SetSize(int width, int height)
     {
-        if (tiles == null || tiles.w != width || tiles.h != height)
+        if (tiles == null)
         {
+            dirty = true;
+            tiles = new(width, height);
+            PlaceTiles();
+            return;
+        }
+
+        if (tiles.w != width || tiles.h != height)
+        {
+            dirty = true;
+
+            DestoryTiles();
             tiles = new(width, height);
             PlaceTiles();
         }
     }
+
+    public void SetWidth(float width)
+    {
+        SetSize((int)width, tiles.h);
+    }
+
+    public void SetHeight(float height)
+    {
+        SetSize(tiles.w, (int)height);
+    }
+
+    public int GetWidth()
+    {
+        if (tiles != null) return tiles.w;
+        return 0;
+    }
+
+    public int GetHeight()
+    {
+        if (tiles != null) return tiles.h;
+        return 0;
+    }
+
 
     public void WriteTileData(MapData<float> data)
     {

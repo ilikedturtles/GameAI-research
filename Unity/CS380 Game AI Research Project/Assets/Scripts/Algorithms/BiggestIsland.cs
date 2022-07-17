@@ -6,6 +6,7 @@ public class BiggestIsland : MonoBehaviour, MapGenSys.Algorithm
 {
     private bool dirty = true;
 
+    [SerializeField]
     private bool _alg_enabled = true;
     public bool alg_enabled
     {

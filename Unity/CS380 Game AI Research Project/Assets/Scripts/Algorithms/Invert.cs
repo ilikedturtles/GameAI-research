@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SampleAlgorithm : MonoBehaviour, MapGenSys.Algorithm
+public class Invert : MonoBehaviour, MapGenSys.Algorithm
 {
-    //public string name = "Sample";
-
+    // Alg Interface
     private bool dirty = true;
+    [SerializeField]
     private bool _alg_enabled = true;
     public bool alg_enabled
     {
@@ -14,10 +14,9 @@ public class SampleAlgorithm : MonoBehaviour, MapGenSys.Algorithm
         set { _alg_enabled = value; dirty = true; }
     }
 
-
     public string Name()
     {
-        return "Sample";
+        return "Inversion";
     }
 
     public bool Dirty()

@@ -2,9 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Propogate : MonoBehaviour, MapGenSys.Algorithm
+public class HolePatch : MonoBehaviour, MapGenSys.Algorithm
 {
+    // Configuration Values
+    [SerializeField]
+    private int neighborsRequired = 4;
+    public int NeighborsRequired
+    {
+        get { return neighborsRequired; }
+        set { neighborsRequired = value; dirty = true; }
+    }
+    public void SetNeighborsRequired(float value)
+    {
+        NeighborsRequired = (int)value;
+    }
+
+    [SerializeField]
+    private int iterations = 1;
+    public int Iterations
+    {
+        get { return iterations; }
+        set { iterations = value; dirty = true; }
+    }
+    public void SetIterations(float value)
+    {
+        Iterations = (int)value;
+    }
+
+
+    // Alg Interface
     private bool dirty = true;
+
     [SerializeField]
     private bool _alg_enabled = true;
     public bool alg_enabled
@@ -12,29 +40,13 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
         get { return _alg_enabled; }
         set { _alg_enabled = value; dirty = true; }
     }
-
-    [SerializeField]
-    private int iterations = 0;
-
-    public int Iterations
-    {
-        get { return iterations; }
-        set { iterations = value; dirty = true; }
-    }
-    
-    public void SetIterations(float value)
-    {
-        Iterations = (int)value;
-    }
-
-    public string Name()
-    {
-        return "Propogate";
-    }
-
     public bool Dirty()
     {
         return dirty;
+    }
+    public string Name()
+    {
+        return "Propogate";
     }
 
     public void Apply(ref MapData<bool> data)
@@ -43,12 +55,12 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 
         if (!alg_enabled) return;
 
+
         int counter = 0;
         while (counter < iterations)
         {
             data = DoIteration(data);
-            //data = newData;
-            counter++;
+            ++counter;
         }
     }
 
@@ -65,7 +77,10 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 
             result.SetPos(gPos, posData || result.GetPos(gPos));
 
-            if (posData == false) continue;
+            // only consider false tiles
+            if (posData == true) continue;
+
+            int neighbors_enabled = 0;
 
             // enable neighbors in temp
             for (int k = 0; k < 4; ++k)
@@ -74,15 +89,20 @@ public class Propogate : MonoBehaviour, MapGenSys.Algorithm
 
                 if (!result.ValidPos(eval)) continue;
 
-                // if neighbor is disabled, set enabled
-                if (map.GetPos(eval) == false)
+                // count enabled neighbors
+                if (map.GetPos(eval) == true)
                 {
-                    result.SetPos(eval, true);
+                    //result.SetPos(eval, true);
+                    neighbors_enabled++;
                 }
+            }
+        
+            if (neighbors_enabled >= NeighborsRequired)
+            {
+                result.SetPos(gPos, true);
             }
         }
 
         return result;
     }
-
 }

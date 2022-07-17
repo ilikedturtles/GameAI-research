@@ -57,7 +57,6 @@ public class MapGenSys : MonoBehaviour
         void Apply(ref MapData<float> data);
     }
 
-    public int width, height;
     public int seed;
 
     public List<Algorithm> algs = new List<Algorithm>();
@@ -84,6 +83,11 @@ public class MapGenSys : MonoBehaviour
     private void Update()
     {
         bool needRecalc = false;
+
+        if (MapManager.Instance.Dirty())
+        {
+            needRecalc = true;
+        }
 
         foreach (var iter in filters)
         {
@@ -112,6 +116,10 @@ public class MapGenSys : MonoBehaviour
     public void Generate() {
         var seed = FindObjectOfType<Seed>();
         seed.ResetRandom();
+
+        int width, height;
+        width = MapManager.Instance.GetWidth();
+        height = MapManager.Instance.GetHeight();
 
         // floating point data structure
         MapData<float> initData = new(width, height);
@@ -152,7 +160,7 @@ public class MapGenSys : MonoBehaviour
             algs[i].Apply(ref mapData);
         }
 
-        MapManager.Instance.WriteColor(new MapPos(1, 1), Color.magenta);
+        //MapManager.Instance.WriteColor(new MapPos(1, 1), Color.magenta);
 
         MapManager.Instance.WriteTileData(mapData);
     }
