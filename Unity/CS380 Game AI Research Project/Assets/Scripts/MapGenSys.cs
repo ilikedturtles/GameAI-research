@@ -162,7 +162,8 @@ public class MapGenSys : MonoBehaviour
 
         //MapManager.Instance.WriteColor(new MapPos(1, 1), Color.magenta);
 
-        GetComponent<AgentMovement>().FindEnds(ref mapData);
+        var comp = GameObject.FindObjectOfType<AgentMovement>();
+        comp.FindEnds(ref mapData);
 
         MapManager.Instance.WriteTileData(mapData);
     }
