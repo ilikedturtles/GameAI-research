@@ -4,8 +4,13 @@ using UnityEngine;
 
 public struct MapPos
 {
+    public float cost;
+    public float given;
+
     public int x;
     public int y;
+    public int parent_x;
+    public int parent_y;
 
     public static MapPos[] Offsets = new[] {
         new MapPos(-1, 0), //left
@@ -18,12 +23,17 @@ public struct MapPos
     {
         x = a;
         y = b;
+        cost = 0;
+        parent_x = a;
+        parent_y = b;
+        given = 0;
     }
 
     public static MapPos operator +(MapPos other, MapPos other2)
     {
         return new MapPos(other.x + other2.x, other.y + other2.y);
-    }    
+    }
+    
 }
 
 public class MapData<T>
