@@ -2593,8 +2593,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1687808509}
   m_HandleRect: {fileID: 1687808508}
   m_Direction: 2
-  m_Value: 0.9999969
-  m_Size: 0.9319182
+  m_Value: 0.9999994
+  m_Size: 0.63163334
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7023,6 +7023,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49c169ccb91ac9d4fbaea3791b5174b1, type: 3}
+--- !u!1 &2987652251494481433 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3630170834516955527, guid: 49c169ccb91ac9d4fbaea3791b5174b1, type: 3}
+  m_PrefabInstance: {fileID: 2987652251494481432}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2987652251494481434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2987652251494481433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93afb39970520a74abcc60222d56b74c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 2987652251494481433}
 --- !u!1001 &3204218335988733405
 PrefabInstance:
   m_ObjectHideFlags: 0
